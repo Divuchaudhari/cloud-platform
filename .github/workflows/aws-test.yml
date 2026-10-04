@@ -11,6 +11,11 @@ jobs:
   test-aws-connection:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug - show token claims
+        run: |
+          IDTOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" | jq -r '.value')
+          echo $IDTOKEN | cut -d. -f2 | base64 -d | jq .
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
