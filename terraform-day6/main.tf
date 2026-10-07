@@ -22,7 +22,7 @@ provider "aws" {
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "day6-vpc"
+    Name        = "day6-vpc"
     Environment = "dev"
 
   }
