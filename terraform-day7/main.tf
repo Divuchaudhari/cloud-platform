@@ -46,10 +46,25 @@ resource "aws_s3_bucket_public_access_block" "demo" {
   restrict_public_buckets = true
 }
 
-# FIX 3: encrypt with our own KMS key
+# FIX 3: encrypt with our own KMS key (now with a key policy)
+data "aws_caller_identity" "current" {}
+
 resource "aws_kms_key" "s3" {
   description         = "Key for the day7 demo bucket"
   enable_key_rotation = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowAccountAdmin"
+        Effect    = "Allow"
+        Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root" }
+        Action    = "kms:*"
+        Resource  = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "demo" {
